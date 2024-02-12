@@ -1,9 +1,9 @@
 // Book Class: Represents a Book
 class Book {
-    constructor(title, author, isbn, year) {
+    constructor(title, author, year) {
         this.title = title;
         this.author = author;
-        this.isbn = isbn;
+        this.year = year;
     }
 }
 
@@ -59,7 +59,7 @@ class UI {
         row.innerHTML = `
         <td>${book.title}</td>
         <td>${book.author}</td>
-        <td>${book.isbn}</td>
+        <td>${book.year}</td>
         <td><a href="#" class="btn btn-danger btn-sm
         delete">X</a></td>
         `;
@@ -87,7 +87,7 @@ class UI {
     static clearFields() {
         document.querySelector('#title').value = '';
         document.querySelector('#author').value = '';
-        document.querySelector('#isbn').value = '';
+        document.querySelector('#year').value = '';
     }
     static deleteBook(el) {
         if(el.classList.contains('delete')) {
@@ -119,12 +119,12 @@ class Store {
         localStorage.setItem('books', JSON.stringify(books));
     }
 
-    static removeBook(isbn) {
-    console.log(`Attempting to remove book with ISBN: ${isbn}`);
+    static removeBook(year) {
+    console.log(`Attempting to remove book with year: ${year}`);
     let books = Store.getBooks();
     console.log('Books before removal:', books);
 
-    books = books.filter(book => book.isbn !== isbn);
+    books = books.filter(book => book.year !== year);
     console.log(books);
     localStorage.setItem('books', JSON.stringify(books));
     }
@@ -143,7 +143,7 @@ document.querySelector('#book-list').addEventListener('click', (e) => {
     // Check if the click event is from a delete button
     if(e.target.classList.contains('delete')) {
         // Call UI.deleteBook and pass in the clicked element
-        Store.removeBook(isbn);
+        Store.removeBook(year);
         UI.deleteBook(e.target);
     }
 });
@@ -158,16 +158,16 @@ document.querySelector('#book-form').addEventListener('submit', (e) =>
     e.preventDefault();
 
     // Get form values
-    const title = document.querySelector('#title').value;
-    const author = document.querySelector('#author').value;
-    const isbn = document.querySelector('#isbn').value;
+    const title = document.getElementById('title').value;
+    const author = document.getElementById('author').value;
+    const year = document.getElementById('year').value;
 
     // Validate
-    if(title === '' || author === '' || isbn === '') {
+    if(title === '' || author === '' || year === '') {
         UI.showAlert('Please fill in all of the fields', 'danger');
     } else {
         // Instantiate Book
-        const book = new Book(title, author, isbn);
+        const book = new Book(title, author, year);
 
         // Add Book to UI
         UI.addBookToList(book);
