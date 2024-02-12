@@ -157,7 +157,7 @@ document.querySelector('#book-form').addEventListener('submit', (e) =>
     // Prevent actual submit
     e.preventDefault();
 
-    // Get form values
+    // Get form values 
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
     const year = document.getElementById('year').value;
