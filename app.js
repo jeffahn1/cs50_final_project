@@ -1,9 +1,9 @@
 // Book Class: Represents a Book
 class Book {
-    constructor(title, author, year) {
+    constructor(title, author, ID) {
         this.title = title;
         this.author = author;
-        this.year = year;
+        this.ID = ID;
     }
 }
 
@@ -59,7 +59,7 @@ class UI {
         row.innerHTML = `
         <td>${book.title}</td>
         <td>${book.author}</td>
-        <td>${book.year}</td>
+        <td>${book.ID}</td>
         <td><a href="#" class="btn btn-danger btn-sm
         delete">X</a></td>
         `;
@@ -87,15 +87,9 @@ class UI {
     static clearFields() {
         document.querySelector('#title').value = '';
         document.querySelector('#author').value = '';
-        document.querySelector('#year').value = '';
+        document.querySelector('#ID').value = '';
     }
-    static deleteBook(el) {
-        if(el.classList.contains('delete')) {
-            el.parentElement.parentElement.remove(); // This removes the <tr>
-        }
-    }
-
-
+    
 }
 
 // Store Class: Storage
@@ -105,7 +99,7 @@ class Store {
         if(localStorage.getItem('books') === null) {
             books = [];
         } else {
-            books = JSON.parse(localStorage.getItem('books'));
+            books = JSON.parse(localStorage.getItem('books'));=1
         }
 
         return books;
@@ -119,55 +113,37 @@ class Store {
         localStorage.setItem('books', JSON.stringify(books));
     }
 
-    static removeBook(year) {
-    console.log(`Attempting to remove book with year: ${year}`);
+    static removeBook(ID) {
+    console.log(`Attempting to remove book with ID: ${ID}`);
     let books = Store.getBooks();
     console.log('Books before removal:', books);
 
-    books = books.filter(book => book.year !== year);
+    books = books.filter(book => book.ID !== ID);
     console.log(books);
     localStorage.setItem('books', JSON.stringify(books));
     }
 }
 
-// Event: Display Books
-document.addEventListener('DOMContentLoaded', UI.displayBooks);
+// Event: Display Books 
+document.addEventListener('DOMContentLoaded', () => {
+    UI.displayBooks();
+});
 
 // Event: Add a Book
 document.querySelector('#book-form').addEventListener('submit', (e) => {
-    // Form submission handling code here...
-});
+    e.preventDefault(); // Prevent actual submit
 
-// Event: Remove a Book 
-document.querySelector('#book-list').addEventListener('click', (e) => {
-    // Check if the click event is from a delete button
-    if(e.target.classList.contains('delete')) {
-        // Call UI.deleteBook and pass in the clicked element
-        Store.removeBook(year);
-        UI.deleteBook(e.target);
-    }
-});
-
-// Event: Display Library
-document.addEventListener('DOMContentLoaded', UI.displayBooks);
-
-// Event: Add a Book
-document.querySelector('#book-form').addEventListener('submit', (e) =>
-{
-    // Prevent actual submit
-    e.preventDefault();
-
-    // Get form values 
+    // Get form values
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
-    const year = document.getElementById('year').value;
+    const ID = document.getElementById('ID').value;
 
     // Validate
-    if(title === '' || author === '' || year === '') {
+    if (title === '' || author === '' || ID === '') {
         UI.showAlert('Please fill in all of the fields', 'danger');
     } else {
         // Instantiate Book
-        const book = new Book(title, author, year);
+        const book = new Book(title, author, ID);
 
         // Add Book to UI
         UI.addBookToList(book);
@@ -176,27 +152,26 @@ document.querySelector('#book-form').addEventListener('submit', (e) =>
         Store.addBook(book);
 
         // Show Success Message
-        UI.showAlert('Book Added', 'Success');
+        UI.showAlert('Book Added', 'success');
 
-        // CLear Fields
+        // Clear Fields
         UI.clearFields();
     }
 });
-// Event: Remove a Book 
 
-document.querySelector('#book-list').addEventListener('click', (e) => 
-{
-    // Remove Book from UI
-    if(e.target.classList.contains('delete')) {
-    
+// Event: Remove a Book
+document.querySelector('#book-list').addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete')) {
+        // Extract ID to remove book from storage
+        const ID = e.target.parentElement.previousElementSibling.textContent;
+
+        // Remove Book from UI
         UI.deleteBook(e.target);
 
-        // Remove book from store
-        
-        Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
-        
+        // Remove book from storage
+        Store.removeBook(ID);
         
         // Show success message
-        UI.showAlert('Book Removed', 'Success');
+        UI.showAlert('Book Removed', 'success');
     }
 });
